@@ -42,6 +42,7 @@ def index():
 
 	return render_template('index.html')
 
+
 @app.route('/join', methods=['GET', 'POST'])
 def join():
 	form = JoinForm()
@@ -50,6 +51,15 @@ def join():
 		flash('You are already logged in!')
 		return render_template('index.html')
 	if form.validate_on_submit:
+		username = form.username.data
+		password = form.password.data
+		
+		user = User(username, password)
+		if user.create_user():
+			session['login'] = username
+			return render_template('index.html')
+		else:
+			return redirect(url_for('join'))
 		
 	
 @app.route('/login', methods=['GET', 'POST'])
@@ -68,7 +78,6 @@ def login():
 			return redirect(url_for('index'))
 		else:
 			session['login'] = False
-			flash('Incorrect username or password!')
 			return redirect(url_for('login'))
 	return render_template('login.html', form=form)
 
