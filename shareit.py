@@ -1,11 +1,12 @@
-from flask import Flask, render_template, flash, redirect, session, url_for
+from flask import *
 import os 
 from replit import db
 from flask_bootstrap import Bootstrap
+from forms import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 bootstrap = Bootstrap(app)
-db['new'] = [os.getenv('SECRET_KEY'), [	['Testing', 'isaiah08', 'JUST TESTING!!hjfkhflajfsadkfjsdlfkdsfjsdkfjaldfjafshfhslafjlsahslfsjflsajfdlskjfsldkafjdasklfjaslfjaslkfjasdlkfjsalfjaslfasjflasjfalkdjfaksfsdfjaslfkajldkjalsfjdaslfjalfjasdkfljalkfjsflksdjfslkjfslfjsklfjsalkfdsjfaldjfldkjfaslkfjaklfjeirueifudsifujasdfjadsklfjasdlfkjlfjafasd!', 5] ] ]
+
 
 class User():
 	def __init__(self, username, password):
@@ -86,6 +87,8 @@ def logout():
 	session['login'] = False
 	flash('You have been logged out!')
 	return render_template('logout.html')
+
+
 @app.route('/post', methods=['GET', 'POST'])
 def post():
 	form = PostForm()
@@ -93,11 +96,10 @@ def post():
 		title = form.title.data
 		post = form.post.data
 		# [title, post, likes]
-		db[session.get('login')][0].append([title, post, 0])
+		db[session.get('login')][1].append([title, post, 0])
 		# [title, username, post, likes]
 		db['new'].insert(0, [title, session.get('login'), post, 0])
 		return redirect(url_for('posts'))
-
 
 	if session.get('login') == False or session.get('login') == None:
 		return redirect('login')
